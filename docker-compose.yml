@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:9
+    container_name: councilmatic_postgres
+    environment:
+      - POSTGRES_PASSWORD=str0ng*p4ssw0rd
+      - PGDATA=/var/lib/postgresql/data
+    volumes:
+      - ../councilmatic-website-data:/var/lib/postgresql/data
+    ports:
+      - 6432:5432
+  scraper:
+    image: ekkus93/councilmatic-docker:latest
+    container_name: councilmatic_scraper
+    environment:
+      - POSTGRES_PASSWORD=str0ng*p4ssw0rd
+      - PGDATA=/var/lib/postgresql/data
+    volumes:
+      - ../councilmatic-scraper-data:/var/lib/postgresql/data
+      - ../councilmatic-scraper:/home/postgres/work
+    ports:
+      - 7432:5432
+      - 8888:8888      
+  kettle:
+    image: ekkus93/councilmatic-etl:latest
+    container_name: councilmatic_etl
+    environment:
+      - VNC_PW=str0ng*p4ssw0rd
+      - VNC_RESOLUTION=1024x640
+    volumes:
+      - ../work:/home/ubuntu/work
+    ports:
+      - 5901:5901
+      - 6901:6901
